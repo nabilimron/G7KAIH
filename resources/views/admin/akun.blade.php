@@ -15,6 +15,7 @@
     </section>
 @endsection
 
+
 @push('scripts')
 <script>
 const USERS={g:[['Andi Saputra','andi.putra','Guru Wali','Aktif'],['Siti Nurhaliza','siti.nur','Guru Wali','Nonaktif'],['Riski Ramadhan','riski.rama','Guru Wali','Aktif'],['Nur Aisyah','nur.aisyah','Guru Wali','Aktif']],s:[['Fajar Maulana','fajar.m','Siswa','Aktif'],['Dewi Anggraini','dewi.a','Siswa','Aktif'],['Rizky Pratama','rizky.p','Siswa','Nonaktif'],['Lestari Putri','lestari.p','Siswa','Aktif']]};
