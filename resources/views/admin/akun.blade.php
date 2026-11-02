@@ -1,6 +1,7 @@
 @extends('layout.admin')
 @section('title', 'Kelola Akun & Pengguna')
 
+
 @section('content')
     <section class="view on" id="akun">
      <div class="top"><div><h1>Kelola Akun &amp; Pengguna</h1><p class="sub">Kelola akses guru wali dan siswa SMPN 21 Sinjai.</p></div><button class="btn" onclick="toast('Form tambah akun dibuka')"><span data-i="plus"></span>Tambah Akun</button></div>
