@@ -12,7 +12,6 @@ Sistem ini menggantikan pelaporan manual berbasis buku kertas. Dilengkapi dengan
 - **Muh. Akram Marzuki**
 - **Nabil Imron**
 - **Inriani**
-- **Christian Gerrard M. Rantelino**
 
 ---
 
