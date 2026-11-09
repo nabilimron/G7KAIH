@@ -13,3 +13,4 @@
     </nav>
     <div class="sch"><span>SMPN 21 Sinjai</span><small>Tahun ajaran 2025 / 2026</small></div>
 </aside>
+
