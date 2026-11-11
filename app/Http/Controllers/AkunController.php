@@ -17,6 +17,7 @@ class AkunController extends Controller{
         logger('AkunController::__construct dijalankan');
     }
 
+    
     public function index(Request $request){
         $role = $request->query('role', 'guru_wali');
         abort_unless(in_array($role, self::ROLE_AKUN, true), 404);
