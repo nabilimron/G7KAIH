@@ -6,6 +6,7 @@ use App\Models\User;
 
 class AkunService{
     public function __construct(private string $statusAwal = 'aktif'){
+        logger('AkunController::__construct dijalankan');
     }
 
     public function buat(array $data): User{
