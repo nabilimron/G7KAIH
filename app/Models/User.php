@@ -15,12 +15,14 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
- 
+
+    protected $table = 'users';
+    protected $primaryKey = 'id';
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',   // password otomatis di-hash saat disimpan
+            'password' => 'hashed',
         ];
     }
  
