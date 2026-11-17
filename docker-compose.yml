@@ -1,0 +1,56 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: g7kaih_app
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      APP_NAME: "G7KAIH"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: db_g7kaih
+      DB_USERNAME: g7kaih
+      DB_PASSWORD: g7kaih_secret
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      QUEUE_CONNECTION: database
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - g7kaih_net
+
+  db:
+    image: mysql:8.0
+    container_name: g7kaih_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: db_g7kaih
+      MYSQL_USER: g7kaih
+      MYSQL_PASSWORD: g7kaih_secret
+      MYSQL_ROOT_PASSWORD: root_secret
+    ports:
+      - "3307:3306"
+    volumes:
+      - g7kaih_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_secret"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    networks:
+      - g7kaih_net
+
+volumes:
+  g7kaih_db_data:
+
+networks:
+  g7kaih_net:
+    driver: bridge
