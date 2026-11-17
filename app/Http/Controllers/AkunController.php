@@ -84,7 +84,7 @@ class AkunController extends Controller{
             unset($data['password']);
         }
 
-        $akun->update($data);
+        $this->service->perbarui($akun, $data);
 
         return redirect()->route('akun.index', ['role' => $akun->role])
             ->with('ok', 'Akun berhasil diperbarui');
@@ -97,10 +97,38 @@ class AkunController extends Controller{
         abort_if($akun->id === $request->user()?->id, 403, 'Tidak boleh menghapus akun sendiri.');
 
         $role = $akun->role;
-        $akun->delete();
+        try {
+            $this->service->hapus($akun);
+        } catch (\RuntimeException $e) {
+            return back()->with('err', $e->getMessage());
+        }
 
         return redirect()->route('akun.index', ['role' => $role])
             ->with('ok', 'Akun berhasil dihapus');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $data = $request->validate([
+            'username' => ['required', 'string', 'max:100'],
+        ], [
+            'username.required' => 'Username atau email akun wajib diisi.',
+        ]);
+
+        $user = User::where('username', $data['username'])
+            ->orWhere('email', $data['username'])
+            ->first();
+
+        if (! $user) {
+            return back()->with('err', 'Akun "' . $data['username'] . '" tidak ditemukan.');
+        }
+
+        $user->update(['password' => 'Password123']);
+        \Illuminate\Support\Facades\DB::table('user')
+            ->where('username', $user->username)
+            ->update(['password' => \Illuminate\Support\Facades\Hash::make('Password123')]);
+
+        return back()->with('ok', 'Password akun "' . $user->username . '" berhasil direset ke sandi standar.');
     }
 
     private function pastikanBolehDikelola(User $akun): void

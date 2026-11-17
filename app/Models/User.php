@@ -43,6 +43,20 @@ class User extends Authenticatable
     /** Teks peran untuk ditampilkan di tabel */
     public function labelRole(): string
     {
-        return $this->role === 'guru_wali' ? 'Guru Wali' : 'Siswa';
+        return match ($this->role) {
+            'guru_wali' => 'Guru Wali',
+            'admin'     => 'Admin',
+            default     => 'Siswa',
+        };
+    }
+
+    public function siswa()
+    {
+        return $this->hasOne(Siswa::class, 'user_id', 'id');
+    }
+
+    public function guruWali()
+    {
+        return $this->hasOne(GuruWali::class, 'user_id', 'id');
     }
 }

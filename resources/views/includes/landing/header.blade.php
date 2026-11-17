@@ -1,17 +1,6 @@
 <header class="site-header" id="beranda">
       <a class="brand" href="#beranda" aria-label="G7KAIH SMPN 21 Sinjai">
-        <svg class="brand__logo" viewBox="-19.5 -19.5 39 39" aria-hidden="true">
-          <circle cx="12" cy="0" r="6.5" fill="#17B979"/>
-          <circle cx="7.482" cy="9.383" r="6.5" fill="#E34557"/>
-          <circle cx="-2.67" cy="11.699" r="6.5" fill="#238CE2"/>
-          <circle cx="-10.812" cy="5.207" r="6.5" fill="#EFBD37"/>
-          <circle cx="-10.812" cy="-5.207" r="6.5" fill="#34B6CA"/>
-          <circle cx="-2.67" cy="-11.699" r="6.5" fill="#2B64B7"/>
-          <circle cx="7.482" cy="-9.383" r="6.5" fill="#31AA63"/>
-          <circle cx="0" cy="0" r="8" fill="#fff"/>
-          <circle cx="0" cy="-5" r="2.5" fill="#10A874"/>
-          <rect x="-5.5" y="-1.5" width="11" height="9" rx="4.5" fill="#10A874"/>
-        </svg>
+        <img class="brand__logo" src="{{ asset('images/logo-g7kaih.png') }}" alt="Logo G7KAIH" width="40" height="40">
         <span class="brand__text">
           <span class="brand__name">G7KAIH</span>
           <span class="brand__sub">SMPN 21 Sinjai</span>
@@ -25,5 +14,16 @@
         <a href="#kontak">Kontak</a>
       </nav>
 
-      <a class="btn btn--login" href="#login">Login</a>
+      <div class="header-actions">
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Ubah tema terang atau gelap" title="Ubah tema">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        @auth
+          <a class="btn btn--login" href="{{ match (auth()->user()->role) { 'siswa' => route('student.dashboard'), 'guru_wali' => route('teacher.dashboard'), default => route('admin.dashboard') } }}">Dashboard</a>
+        @else
+          <a class="btn btn--login" href="{{ route('login') }}">Login</a>
+        @endauth
+      </div>
     </header>

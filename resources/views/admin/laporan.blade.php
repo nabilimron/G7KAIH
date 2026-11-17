@@ -1,24 +1,98 @@
 @extends('layout.admin')
-@section('title', 'Pemantauan Seluruh Laporan')
+@section('title', 'Pemantauan Keseluruhan')
 
 @section('content')
-     <section class="view on" id="lapor">
-     <div><h1>Pemantauan Seluruh Laporan</h1><p class="sub">Pantau aktivitas pelaporan seluruh kelas di sekolah.</p></div>
-     <div class="row" style="gap:12px"><div class="fld"><label for="lp">Periode</label><label class="ctl"><select id="lp"><option>Harian</option><option>Mingguan</option><option>Bulanan</option></select><span data-i="chevron-down"></span></label></div><div class="fld"><label for="lt">Tanggal</label><label class="ctl"><input id="lt" type="date" value="2025-09-22"></label></div><div class="fld"><label for="lk">Kelas</label><label class="ctl"><select id="lk"><option value="">Semua Kelas</option></select><span data-i="chevron-down"></span></label></div></div>
-     <div class="mt"><div><div class="ib"><span data-i="clipboard-list"></span></div><div><small>Total Laporan</small><b style="color:var(--pri)">902</b></div></div><div><div class="ib" style="background:#e5f8f0;color:#10a874"><span data-i="circle-check"></span></div><div><small>Disetujui</small><b style="color:#10a874">498</b></div></div><div><div class="ib" style="background:#fff0f2;color:#f04462"><span data-i="circle-x"></span></div><div><small>Ditolak</small><b style="color:#f04462">361</b></div></div></div>
-     <div class="card sh"><h2>Daftar Laporan</h2><div class="tw"><table><thead><tr><th style="width:28px;background:#f8fafc">No</th><th style="background:#f8fafc">Tanggal</th><th style="background:#f8fafc">Nama Siswa</th><th style="background:#f8fafc">Kelas</th><th style="background:#f8fafc">Status</th></tr></thead><tbody id="lapB"></tbody></table></div><div class="pg" id="pg2"></div></div>
-     <p style="color:var(--mut);font-size:11px">Data diperbarui terakhir pada 22 September 2025, 14.30 WITA</p>
-    </section>
+<section class="view on">
+ <div class="top">
+  <div><h1>Pemantauan Seluruh Laporan</h1><p class="sub">Pantau aktivitas pelaporan seluruh kelas di sekolah.</p></div>
+ </div>
+
+ <form method="GET" action="{{ route('admin.laporan') }}" class="g3">
+  <div class="fld">
+   <label for="l_periode">Periode</label>
+   <div class="ctl">
+    <select id="l_periode" name="periode" onchange="this.form.submit()">
+     <option value="">Harian</option>
+     <option value="harian" @selected($periode === 'harian')>Hari Ini</option>
+     <option value="mingguan" @selected($periode === 'mingguan')>Mingguan</option>
+     <option value="bulanan" @selected($periode === 'bulanan')>Bulanan</option>
+    </select>
+    <span data-i="chevron-down"></span>
+   </div>
+  </div>
+  <div class="fld">
+   <label for="l_tanggal">Tanggal</label>
+   <div class="ctl">
+    <input id="l_tanggal" type="date" name="tanggal" value="{{ $tanggal }}" onchange="this.form.submit()">
+   </div>
+  </div>
+  <div class="fld">
+   <label for="l_kelas">Kelas</label>
+   <div class="ctl">
+    <select id="l_kelas" name="id_kelas" onchange="this.form.submit()">
+     <option value="">Semua Kelas</option>
+     @foreach ($kelasList as $k)
+      <option value="{{ $k->id_kelas }}" @selected((string) $idKelas === (string) $k->id_kelas)>{{ $k->nama_kelas }}</option>
+     @endforeach
+    </select>
+    <span data-i="chevron-down"></span>
+   </div>
+  </div>
+ </form>
+
+ <div class="mt">
+  <div>
+   <span class="ib" style="background:var(--soft);color:var(--pri)"><span data-i="clipboard-list"></span></span>
+   <div><small>Total Laporan</small><b style="color:var(--pri)">{{ $totalLaporan }}</b></div>
+  </div>
+  <div>
+   <span class="ib" style="background:#e5f8f0;color:#10a874"><span data-i="circle-check"></span></span>
+   <div><small>Disetujui</small><b style="color:#10a874">{{ $disetujui }}</b></div>
+  </div>
+  <div>
+   <span class="ib" style="background:#fff0f2;color:#f04462"><span data-i="circle-x"></span></span>
+   <div><small>Ditolak</small><b style="color:#f04462">{{ $ditolak }}</b></div>
+  </div>
+ </div>
+
+ <div class="card sh">
+  <h2>Daftar Laporan</h2>
+
+  <div class="tw">
+   <table>
+    <thead><tr><th>No</th><th>Tanggal</th><th>Nama Siswa</th><th>Kelas</th><th>Status</th></tr></thead>
+    <tbody>
+     @forelse ($reports as $lap)
+      @php
+       $lbl = $lap->statusLabel();
+       $nama = $lap->siswa->nama_siswa ?? 'Siswa';
+       $ini = collect(preg_split('/\s+/', trim($nama)))->take(2)->map(fn($w)=>mb_strtoupper(mb_substr($w,0,1)))->join('');
+      @endphp
+      <tr>
+       <td style="color:var(--mut)">{{ $reports->firstItem() + $loop->index }}</td>
+       <td>{{ $lap->tanggal->translatedFormat('d M Y') }}</td>
+       <td><div class="nm"><span>{{ $nama }}</span><span class="av">{{ $ini }}</span></div></td>
+       <td>{{ $lap->siswa->kelas->nama_kelas ?? '-' }}</td>
+       <td>
+        <span class="pill" style="background:{{ $lbl === 'Disetujui' ? 'var(--ok)' : ($lbl === 'Ditolak' ? 'var(--bad)' : '#94600a') }}">
+         {{ $lbl }}
+        </span>
+       </td>
+      </tr>
+     @empty
+      <tr><td colspan="5" style="text-align:center;color:var(--mut);padding:24px;">Belum ada laporan masuk di database.</td></tr>
+     @endforelse
+    </tbody>
+   </table>
+  </div>
+
+  {{ $reports->links() }}
+ </div>
+
+ <small style="color:var(--mut);font-size:11px;">Data diperbarui terakhir pada {{ now()->translatedFormat('d F Y, H.i') }} WITA</small>
+</section>
 @endsection
 
 @push('scripts')
-<script>
-const KELAS=[['VII-A','Andi Saputra',32],['VII-B','Siti Nurhaliza',32],['VIII-A','Riski Ramadhan',30],['VIII-B','Nur Aisyah',31]];
-$('#lk').innerHTML+=KELAS.map(k=>`<option>${k[0]}</option>`).join('');
-const LAP=[['20 Sep 2025','Andi Saputra','VII-A','Disetujui'],['22 Sep 2025','Nur Aisyah','VII-B','Disetujui'],['22 Sep 2025','Riski Ramadhan','VIII-A','Menunggu'],['22 Sep 2025','Siti Nurhaliza','VII-B','Ditolak'],['22 Sep 2025','Fajar Maulana','VIII-A','Disetujui']];
-function lap(){const k=$('#lk').value;$('#lapB').innerHTML=LAP.filter(r=>!k||r[2]===k).map((r,i)=>`<tr><td>${i+1}</td><td>${r[0]}</td><td>${nameCell(r[1])}</td><td>${r[2]}</td><td>${pill(r[3])}</td></tr>`).join('')}
-$('#lk').onchange=lap;lap();
-pager('#pg2');
-paint();
-</script>
+<script>paint();</script>
 @endpush

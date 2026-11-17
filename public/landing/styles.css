@@ -1,32 +1,36 @@
 /* =========================================================
    G7KAIH — SMPN 21 Sinjai · Landing page publik
-   Dibuat dari desain Figma (Desktop 1280px · Mobile 390px)
-   Mobile-first; layout desktop aktif mulai 900px.
+   Figma 1:1 (Desktop 543:1512 & Mobile 543:2580)
+   Edge-to-edge fluid layout across Desktop, Tablet & Mobile
    ========================================================= */
 
 :root {
-  /* Warna (diambil dari file desain) */
   --navy: #102e54;
   --muted: #6f83a0;
-  --blue: #247ef2;
-  --line: #dfeaf5;
+  --muted-2: #98a8bc;
+  --blue: #1f6fd6;
+  --line: #cbd7e5;
+  --line-soft: #dfeaf5;
   --tint: #eaf4ff;
-  --surface: #f4f8fc;
-  --backdrop: #f7f7fa;
-  --white: #fff;
-
+  --surface: #eef3f8;
+  --white: #ffffff;
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-*,
-*::before,
-*::after { box-sizing: border-box; }
-
-html {
-  -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
+[data-theme="dark"] {
+  --navy: #f1f5f9;
+  --muted: #94a3b8;
+  --muted-2: #94a3b8;
+  --blue: #3b82f6;
+  --line: #1e334d;
+  --line-soft: #1e334d;
+  --tint: #132946;
+  --surface: #0f2036;
+  --white: #0c1b2e;
 }
 
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 body {
   margin: 0;
   font-family: var(--font);
@@ -37,26 +41,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
-
 h1, h2, p, ul { margin: 0; padding: 0; }
 ul { list-style: none; }
 a { color: inherit; text-decoration: none; }
 img, svg { display: block; }
 
 .page {
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   background: var(--white);
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
-/* ---------- Ikon ---------- */
-.icon {
-  width: 24px;
-  height: 24px;
-  color: var(--blue);
-  flex: none;
-}
+.icon { width: 24px; height: 24px; color: var(--blue); flex: none; }
 .icon--sm { width: 18px; height: 18px; }
 
 /* ---------- Tombol ---------- */
@@ -65,8 +63,8 @@ img, svg { display: block; }
   align-items: center;
   justify-content: center;
   background: var(--blue);
-  color: var(--white);
-  border-radius: 6px;
+  color: #ffffff;
+  border-radius: 10px;
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
@@ -82,125 +80,170 @@ img, svg { display: block; }
 }
 
 /* =========================================================
-   HEADER  (mobile)
+   HEADER
    ========================================================= */
 .site-header {
   height: 80px;
-  padding: 1px 20px 0;
+  width: 100%;
+  padding: 0 clamp(16px, 4.375vw, 56px);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   background: var(--white);
+  border-bottom: 1px solid var(--line-soft);
 }
 
 .brand {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-}
-.brand__logo {
-  width: 30px;
-  height: 30px;
+  gap: 9px;
   flex: none;
 }
-.brand__text {
-  display: flex;
-  flex-direction: column;
+.brand__logo,
+.brand__logo--ellipse {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: contain;
+  padding: 2px;
+  background: #ffffff;
+  border: 1px solid rgba(16, 46, 84, 0.12);
+  overflow: hidden;
+  flex: none;
 }
-.brand__name {
-  font-size: 16.5px;
-  font-weight: 800;
-  line-height: 18px;
-  color: var(--navy);
-}
-.brand__sub {
-  margin-top: 2px;
-  font-size: 9px;
-  font-weight: 400;
-  line-height: 11px;
-  color: var(--muted);
-}
+.brand__text { display: flex; flex-direction: column; line-height: 1.15; }
+.brand__name { font-size: 20px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+.brand__sub { font-size: 11px; font-weight: 400; color: var(--muted-2); margin-top: 1px; }
 
 .main-nav { display: none; }
 
+.header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+}
+
+.theme-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--surface);
+  color: var(--navy);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.theme-toggle:hover { background: var(--tint); }
+
 .btn--login {
-  width: 50px;
-  height: 27px;
-  margin-top: -1px;
-  font-size: 10.5px;
-  font-weight: 500;
+  min-height: 44px;
+  padding: 11px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
 }
 
 /* =========================================================
-   HERO  (mobile)
+   HERO (Mobile stacked, Desktop full-bleed overlay scrim)
    ========================================================= */
 .hero {
   position: relative;
-  height: 400px;
-  padding: 102px 24px 0;
-  overflow: hidden;
-  isolation: isolate;
-}
-.hero__img {
-  position: absolute;
-  inset: 0;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  z-index: -2;
+  background: var(--white);
+  overflow: hidden;
 }
-.hero::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(90deg,
-    #fff 0%,
-    rgba(255, 255, 255, .94) 50%,
-    rgba(255, 255, 255, .18) 100%);
-}
-
-.hero__eyebrow {
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 15px;
-  text-transform: uppercase;
-  color: var(--blue);
+.hero__content {
+  padding: 24px 24px 28px;
+  order: 1;
 }
 .hero__title {
-  margin-top: 20px;
   font-size: 32px;
   font-weight: 800;
-  letter-spacing: -0.006em;
+  letter-spacing: -0.015em;
   line-height: 1.15;
   color: var(--navy);
 }
 .hero__text {
-  margin-top: 21.2px;
+  margin-top: 14px;
   font-size: 14px;
   font-weight: 400;
-  line-height: 24px;
-  color: var(--navy);
+  line-height: 1.65;
+  color: var(--blue);
 }
-.btn--primary {
-  margin-top: 20.7px;
-  width: 143px;
-  height: 38px;
-  font-size: 12.5px;
-  font-weight: 700;
+.hero__img {
+  order: 2;
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  object-position: center;
+  border-bottom: 1px solid var(--line);
+}
+.hero::after {
+  content: "";
+  display: none;
 }
 
 /* =========================================================
-   FITUR  (mobile: daftar vertikal)
+   7 KEBIASAAN
+   ========================================================= */
+.habits {
+  width: 100%;
+  padding: 32px clamp(24px, 5vw, 64px);
+  background: var(--surface);
+}
+.habits__title {
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: var(--navy);
+}
+.habits__text {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--muted-2);
+}
+.habits__list {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--navy);
+}
+
+/* =========================================================
+   FITUR
    ========================================================= */
 .features {
-  padding: 24px;
+  width: 100%;
+  padding: 28px clamp(24px, 5vw, 64px);
   background: var(--white);
 }
 .features__list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 24px;
 }
 .feature {
@@ -211,7 +254,7 @@ img, svg { display: block; }
 .feature__icon {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
+  border-radius: 999px;
   background: var(--tint);
   display: grid;
   place-items: center;
@@ -220,190 +263,183 @@ img, svg { display: block; }
 .feature__body { min-width: 0; }
 .feature__title {
   font-size: 14px;
-  font-weight: 600;
-  line-height: 18px;
+  font-weight: 700;
+  line-height: 1.3;
   color: var(--navy);
 }
 .feature__text {
   margin-top: 7px;
   font-size: 12px;
   font-weight: 400;
-  line-height: 19px;
-  color: var(--muted);
+  line-height: 1.6;
+  color: var(--muted-2);
 }
 
 /* =========================================================
-   7 KEBIASAAN  (mobile)
+   KONTAK & INFORMASI SEKOLAH
    ========================================================= */
-.habits {
-  padding: 32px 24px;
+.contact-section {
+  width: 100%;
+  padding: 32px clamp(24px, 5vw, 64px) 40px;
   background: var(--surface);
 }
-.habits__title {
-  font-size: 22.5px;
-  font-weight: 800;
-  letter-spacing: -0.006em;
-  line-height: 28.6px;
+.contact-section__title {
+  font-size: 22px;
+  font-weight: 700;
   color: var(--navy);
+  margin-bottom: 24px;
 }
-.habits__text {
-  margin-top: 7px;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 15.5px;
-  color: var(--muted);
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
-.habits__list {
-  margin-top: 24.8px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: var(--w, auto);
-  height: 42px;
-  padding: 1px 14px 0;
-  border-radius: 10px;
+.contact-card {
   background: var(--white);
-  font-size: 11.7px;
-  font-weight: 600;
-  line-height: 1;
-  white-space: nowrap;
-  color: var(--navy);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
+.contact-card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--tint);
+  color: var(--blue);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.contact-card__label { font-size: 12px; color: var(--muted-2); margin-bottom: 4px; }
+.contact-card__val { font-size: 14px; font-weight: 600; color: var(--navy); word-break: break-word; }
 
 /* =========================================================
-   FOOTER  (mobile)
+   FOOTER
    ========================================================= */
 .site-footer {
-  padding: 28px 24px 26px;
+  width: 100%;
+  padding: 24px clamp(24px, 5vw, 64px);
   background: var(--white);
+  border-top: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
-.site-footer .brand { align-items: flex-start; }
-.site-footer .brand__logo { width: 30px; height: 30px; margin-top: 2.5px; }
-.site-footer .brand__text { padding-top: 1px; }
-.site-footer .brand__name { font-size: 16.5px; }
-.site-footer .brand__sub { margin-top: 2px; font-size: 9px; }
-.site-footer__info { margin-top: 18.5px; }
-.site-footer__tagline {
-  font-size: 11.75px;
-  font-weight: 500;
-  line-height: 14px;
-  color: var(--navy);
-}
-.site-footer__copy {
-  margin-top: 6px;
-  font-size: 9.9px;
-  font-weight: 400;
-  line-height: 13px;
-  color: var(--muted);
+.site-footer .brand--small .brand__logo { width: 32px; height: 32px; }
+.site-footer .brand--small .brand__name { font-size: 17px; }
+.site-footer__info { display: flex; flex-direction: column; gap: 4px; }
+.site-footer__tagline { font-size: 12px; font-weight: 500; color: var(--navy); }
+.site-footer__copy { font-size: 12px; color: var(--muted-2); }
+
+/* =========================================================
+   TABLET (640px .. 899px)
+   ========================================================= */
+@media (min-width: 640px) {
+  .features__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .contact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .site-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .site-footer__info { text-align: right; }
 }
 
 /* =========================================================
-   DESKTOP  (≥ 900px)
+   DESKTOP (>= 900px) — Figma 543:1512 Edge-to-Edge
    ========================================================= */
 @media (min-width: 900px) {
-  body { background: var(--backdrop); }
-
-  .site-header {
-    padding: 2px 56px 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .brand { gap: 8px; }
-  .brand__logo { width: 39px; height: 39px; }
-  .brand__name { font-size: 20.5px; line-height: 22px; }
-  .brand__sub { margin-top: 1px; font-size: 10px; line-height: 12px; }
+  .brand__logo { width: 38px; height: 38px; }
+  .brand__name { font-size: 21px; }
+  .brand__sub { font-size: 12px; }
 
   .main-nav {
     display: flex;
     align-items: center;
-    gap: 30px;
-    font-size: 12.5px;
-    font-weight: 500;
-    line-height: 16px;
-    color: var(--muted);
+    gap: 28px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted-2);
   }
   .main-nav a { transition: color .15s ease; }
   .main-nav a:hover { color: var(--navy); }
-  .main-nav a.is-active { color: var(--blue); }
+  .main-nav a.is-active { color: var(--blue); font-weight: 600; }
 
-  .btn--login {
-    width: 71px;
-    height: 38px;
-    margin-top: -1px;
-    font-size: 12.5px;
-    font-weight: 500;
-  }
-
-  /* Hero */
+  /* Hero overlay layout (Figma 543:1536 padding 54px 64px 40px) */
   .hero {
-    height: 385px;
-    padding: 54px 64px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 54px clamp(32px, 5vw, 64px) 40px;
     border-radius: 10px;
+    isolation: isolate;
   }
-  .hero::after {
-    background: linear-gradient(90deg,
-      #fff 0%,
-      rgba(255, 255, 255, .98) 36%,
-      rgba(255, 255, 255, .38) 66%,
-      rgba(255, 255, 255, 0) 100%);
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    padding: 0;
+    max-width: 460px;
   }
-  .hero__content { max-width: 560px; }
-  .hero__title {
-    margin-top: 20px;
-    font-size: 46px;
-  }
+  .hero__title { font-size: 38px; line-height: 1.15; max-width: 440px; }
   .hero__text {
     margin-top: 22px;
     font-size: 16px;
-    line-height: 26.6px;
+    line-height: 1.65;
+    color: var(--navy);
+    max-width: 420px;
   }
-  .btn--primary { margin-top: 21px; }
+  .hero__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-bottom: 0;
+    z-index: -2;
+  }
+  .hero::after {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(90deg,
+      #ffffff 0%,
+      rgba(255, 255, 255, .98) 28%,
+      rgba(255, 255, 255, .42) 60%,
+      rgba(255, 255, 255, 0) 100%);
+  }
+  [data-theme="dark"] .hero::after {
+    background: linear-gradient(90deg,
+      #0c1b2e 0%,
+      rgba(12, 27, 46, .96) 34%,
+      rgba(12, 27, 46, .52) 68%,
+      rgba(12, 27, 46, .18) 100%);
+  }
 
-  /* Fitur: 4 kolom */
-  .features { padding: 48px; }
+  .habits { padding: 40px clamp(32px, 5vw, 64px) 32px; }
+  .habits__title { font-size: 27px; }
+  .habits__list { margin-top: 32px; }
+
+  .features { padding: 40px clamp(32px, 5vw, 64px); }
   .features__list {
-    flex-direction: row;
-    justify-content: space-between;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 28px;
   }
   .feature {
-    flex: 1 1 0;
-    max-width: 275px;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
     text-align: center;
   }
-  .feature__icon { background: var(--white); }
-  .feature__title { font-size: 14px; }
 
-  /* 7 kebiasaan */
-  .habits {
-    padding: 32px 64px;
-    background: var(--white);
-  }
-  .habits__title { font-size: 26.5px; line-height: 33.6px; }
-  .habits__text { margin-top: 6px; font-size: 13px; line-height: 19.5px; }
-  .habits__list { margin-top: 21.9px; }
+  .contact-section { padding: 40px clamp(32px, 5vw, 64px); }
+  .contact-section__title { font-size: 27px; }
+  .contact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 
-  /* Footer */
-  .site-footer {
-    padding: 28px 64px 66px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
-  .site-footer__info { margin-top: 0; width: 222px; }
-  .site-footer .brand__logo { margin-top: 1.5px; }
-  .site-footer .brand__text { padding-top: 0; }
-  .site-footer .brand__sub { margin-top: -2px; }
+  .site-footer { padding: 28px clamp(32px, 5vw, 64px); }
 }
 
-/* ---------- Preferensi pengguna ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .btn, .main-nav a { transition: none; }

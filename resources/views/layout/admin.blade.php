@@ -10,6 +10,7 @@
     @stack('styles')
 </head>
 <body>
+    <div class="drawer-backdrop" onclick="document.body.classList.remove('nav-open')" aria-hidden="true"></div>
     @include('includes.admin._sidebar')
 
     <div class="area">
