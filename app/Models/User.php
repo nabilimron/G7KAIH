@@ -44,7 +44,6 @@ class User extends Authenticatable
 
     // ===== METHOD BUATAN SENDIRI =====
 
-    /** Dua huruf awal nama, untuk avatar */
     public function inisial(): string
     {
         return strtoupper(substr($this->name, 0, 2));
@@ -65,8 +64,6 @@ class User extends Authenticatable
             default     => 'Siswa',
         };
     }
-
-    // ===== RELASI MODEL =====
 
     public function siswa()
     {
