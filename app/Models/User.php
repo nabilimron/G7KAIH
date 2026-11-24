@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Models;
@@ -35,10 +34,10 @@ class User extends Authenticatable
     {
         return Attribute::make(
             // GETTER: mengubah username menjadi huruf kecil saat dibaca
-            get: fn ($value) => strtolower($value),
+            get: fn (?string $value) => $value !== null ? strtolower($value) : null,
 
             // SETTER: menghapus spasi dan mengubah menjadi huruf kecil sebelum disimpan
-            set: fn ($value) => strtolower(trim($value))
+            set: fn (?string $value) => $value !== null ? strtolower(trim($value)) : null
         );
     }
 
