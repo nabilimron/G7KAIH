@@ -60,7 +60,6 @@ class AkunController extends Controller{
             ->with('ok', 'Akun berhasil ditambahkan');
     }
 
-    // UPDATE
     public function edit(User $akun)
     {
         $this->pastikanBolehDikelola($akun);
@@ -90,7 +89,6 @@ class AkunController extends Controller{
             ->with('ok', 'Akun berhasil diperbarui');
     }
 
-    // DELETE
     public function destroy(Request $request, User $akun)
     {
         $this->pastikanBolehDikelola($akun);

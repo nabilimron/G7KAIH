@@ -11,7 +11,6 @@
  <form method="POST" action="{{ route('admin.pengaturan.update') }}" style="display:flex;flex-direction:column;gap:16px;">
   @csrf @method('PUT')
 
-  {{-- Bar Atas: Tahun ajaran aktif (Figma 434:2095) --}}
   <div class="bar" style="flex-wrap:wrap;padding:16px;">
    <div style="display:flex;gap:10px;align-items:center;min-width:220px;flex:1;">
     <span class="ib"><span data-i="calendar-days"></span></span>
@@ -41,12 +40,11 @@
   </div>
 
   @if ($errors->any())
-   <div class="note" style="background:#fdecee;color:#e34557;">
+   <div class="note" style="background:var(--badbg);color:var(--bad);">
     <span>{{ $errors->first() }}</span>
    </div>
   @endif
 
-  {{-- 2x2 Grid Pengaturan (Figma 434:2120) --}}
   <div class="g2 eq">
    <div class="set">
     <div class="hd">
@@ -95,7 +93,7 @@
      <div class="opt"><div><b>Ringkasan mingguan via email</b><small>Kirim rekap pelaporan setiap Senin pagi.</small></div><label class="sw"><input type="checkbox"><s></s></label></div>
     </div>
     <div class="fld m"><label for="notif_time">Waktu pengingat harian</label><div class="ctl"><input id="notif_time" value="19.00 WITA" readonly><span data-i="clock"></span></div></div>
-    <div style="display:flex;gap:8px;align-items:flex-start;font-size:10px;color:var(--mut);">
+    <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--mut);">
      <span data-i="info" style="font-size:14px;"></span>
      <span>Notifikasi admin muncul di aplikasi. Ringkasan email dikirim ke alamat email akun admin.</span>
     </div>
@@ -112,12 +110,11 @@
      <div class="fld m"><label for="adm_new">Kata sandi baru</label><div class="ctl"><input id="adm_new" type="password" name="password" placeholder="Minimal 8 karakter"><span data-i="eye-off"></span></div></div>
      <div class="fld m"><label for="adm_cnf">Konfirmasi kata sandi</label><div class="ctl"><input id="adm_cnf" type="password" name="password_confirmation" placeholder="Ulangi kata sandi baru"><span data-i="eye-off"></span></div></div>
     </div>
-    <small style="color:var(--mut);font-size:10px;">Gunakan kombinasi huruf dan angka. Kosongkan kolom kata sandi jika tidak ingin menggantinya.</small>
+    <small style="color:var(--mut);font-size:12px;">Gunakan kombinasi huruf dan angka. Kosongkan kolom kata sandi jika tidak ingin menggantinya.</small>
     <div class="opt" style="padding-top:6px;border-top:1px solid var(--line);"><div><b>Keluar otomatis saat tidak aktif</b><small>Akhiri sesi setelah 30 menit tanpa aktivitas.</small></div><label class="sw"><input type="checkbox" checked><s></s></label></div>
    </div>
   </div>
 
-  {{-- Footer Action Bar (Figma 434:2036) --}}
   <div class="bar" style="flex-wrap:wrap;">
    <div><b>Simpan pengaturan sekolah Anda</b><small>Perubahan diterapkan setelah Anda menyimpannya ke database db_g7kaih.</small></div>
    <a class="btn o sm" href="{{ route('admin.pengaturan') }}">Batal</a>

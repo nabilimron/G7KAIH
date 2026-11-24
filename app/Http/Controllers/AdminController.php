@@ -54,6 +54,23 @@ class AdminController extends Controller
             return $bar;
         });
 
+        $kelasDistribusi = Kelas::orderBy('nama_kelas')->get()->map(function (Kelas $k) {
+            $sIds = Siswa::where('id_kelas', $k->id_kelas)->pluck('id_siswa');
+            $ok = Laporan::whereIn('id_siswa', $sIds)->where('status_verifikasi', true)->count();
+            $no = Laporan::whereIn('id_siswa', $sIds)->where('status_verifikasi', false)->whereNotNull('id_guru_verifikator')->count();
+            $wait = Laporan::whereIn('id_siswa', $sIds)->where('status_verifikasi', false)->whereNull('id_guru_verifikator')->count();
+            $tot = $ok + $no + $wait;
+
+            return [
+                'kelas' => $k->nama_kelas,
+                'ok' => $ok,
+                'wait' => $wait,
+                'no' => $no,
+                'total' => $tot,
+                'pct' => $tot > 0 ? (int) round(($ok / $tot) * 100) : 0,
+            ];
+        });
+
         return view('admin.dashboard', compact(
             'totalSiswa',
             'totalGuru',
@@ -67,7 +84,8 @@ class AdminController extends Controller
             'pctDitolak',
             'recentLaporan',
             'trendBars',
-            'maxTrend'
+            'maxTrend',
+            'kelasDistribusi'
         ));
     }
 
@@ -189,6 +207,7 @@ class AdminController extends Controller
         $totalLaporan = Laporan::count();
         $disetujui = Laporan::where('status_verifikasi', true)->count();
         $ditolak = Laporan::where('status_verifikasi', false)->whereNotNull('id_guru_verifikator')->count();
+        $menunggu = Laporan::where('status_verifikasi', false)->whereNull('id_guru_verifikator')->count();
         $kelasList = Kelas::orderBy('nama_kelas')->get();
 
         return view('admin.laporan', compact(
@@ -199,6 +218,7 @@ class AdminController extends Controller
             'idKelas',
             'totalLaporan',
             'disetujui',
+            'menunggu',
             'ditolak',
             'kelasList'
         ));

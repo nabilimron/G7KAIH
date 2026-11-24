@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Badge;
+use App\Models\BadgeSiswa;
+use App\Models\DetailLaporan;
 use App\Models\GuruWali;
+use App\Models\Kebiasaan;
 use App\Models\Kelas;
 use App\Models\Laporan;
+use App\Models\Semester;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
 
@@ -28,6 +33,12 @@ class TeacherController extends Controller
 
         $siswaList = Siswa::with('kelas')
             ->where('id_guru', $guru->id_guru)
+            ->withCount([
+                'laporan as total_laporan_count',
+                'laporan as disetujui_count' => fn ($q) => $q->where('status_verifikasi', true),
+                'laporan as ditolak_count' => fn ($q) => $q->where('status_verifikasi', false)->whereNotNull('id_guru_verifikator'),
+                'laporan as menunggu_count' => fn ($q) => $q->where('status_verifikasi', false)->whereNull('id_guru_verifikator'),
+            ])
             ->orderBy('nama_siswa')
             ->get();
 
@@ -35,6 +46,33 @@ class TeacherController extends Controller
         $disetujui = Laporan::whereIn('id_siswa', $siswaIds)->where('status_verifikasi', true)->count();
         $ditolak = Laporan::whereIn('id_siswa', $siswaIds)->where('status_verifikasi', false)->whereNotNull('id_guru_verifikator')->count();
         $menunggu = Laporan::whereIn('id_siswa', $siswaIds)->where('status_verifikasi', false)->whereNull('id_guru_verifikator')->count();
+        $totalLaporan = $disetujui + $ditolak + $menunggu;
+        $pctVerif = $totalLaporan > 0 ? (int) round(($disetujui / $totalLaporan) * 100) : 0;
+        $pctMenunggu = $totalLaporan > 0 ? round(($menunggu / $totalLaporan) * 100, 1) : 0;
+        $pctDitolak = $totalLaporan > 0 ? round(($ditolak / $totalLaporan) * 100, 1) : 0;
+
+        $kelopakColors = ['#17B979', '#E34557', '#238CE2', '#EFBD37', '#34B6CA', '#2B64B7', '#31AA63'];
+        $kebiasaanList = Kebiasaan::orderBy('id_kebiasaan')->get();
+        $detailCounts = DetailLaporan::whereHas('laporan', fn ($q) => $q->whereIn('id_siswa', $siswaIds))
+            ->selectRaw('id_kebiasaan, COUNT(*) as total, SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as done')
+            ->groupBy('id_kebiasaan')
+            ->get()
+            ->keyBy('id_kebiasaan');
+
+        $habitStats = $kebiasaanList->values()->map(function ($k, $idx) use ($detailCounts, $kelopakColors) {
+            $row = $detailCounts->get($k->id_kebiasaan);
+            $tot = $row ? (int) $row->total : 0;
+            $done = $row ? (int) $row->done : 0;
+            $pct = $tot > 0 ? (int) round(($done / $tot) * 100) : 0;
+
+            return [
+                'nama' => ($idx + 1) . '. ' . $k->nama_kebiasaan,
+                'pct' => $pct,
+                'color' => $kelopakColors[$idx % count($kelopakColors)],
+                'done' => $done,
+                'total' => $tot,
+            ];
+        });
 
         $pendingReports = Laporan::with('siswa.kelas')
             ->whereIn('id_siswa', $siswaIds)
@@ -51,6 +89,11 @@ class TeacherController extends Controller
             'disetujui',
             'ditolak',
             'menunggu',
+            'totalLaporan',
+            'pctVerif',
+            'pctMenunggu',
+            'pctDitolak',
+            'habitStats',
             'pendingReports'
         ));
     }
@@ -90,6 +133,7 @@ class TeacherController extends Controller
         $user = $request->user();
         $guru = $this->currentGuru($request);
         $laporan->load(['siswa.kelas', 'details.kebiasaan', 'guruVerifikator']);
+        abort_unless($laporan->siswa && $laporan->siswa->id_guru === $guru->id_guru, 403);
 
         return view('teacher.detail-laporan', compact('user', 'guru', 'laporan'));
     }
@@ -97,6 +141,8 @@ class TeacherController extends Controller
     public function verifyLaporan(Request $request, Laporan $laporan)
     {
         $guru = $this->currentGuru($request);
+        $laporan->load('siswa');
+        abort_unless($laporan->siswa && $laporan->siswa->id_guru === $guru->id_guru, 403);
 
         $data = $request->validate([
             'keputusan' => ['required', 'in:setujui,tolak'],
@@ -109,6 +155,7 @@ class TeacherController extends Controller
                 'id_guru_verifikator' => $guru->id_guru,
                 'catatan'             => $data['catatan'] ?: 'Laporan diterima dan telah diverifikasi.',
             ]);
+            $this->evaluateBadgesForStudent($laporan->id_siswa);
             $msg = 'Laporan siswa berhasil disetujui.';
         } else {
             $laporan->update([
@@ -122,19 +169,46 @@ class TeacherController extends Controller
         return redirect()->route('teacher.verifikasi')->with('ok', $msg);
     }
 
+    private function evaluateBadgesForStudent(int $idSiswa): void
+    {
+        $approvedCount = Laporan::where('id_siswa', $idSiswa)->where('status_verifikasi', true)->count();
+        $earnedIds = BadgeSiswa::where('id_siswa', $idSiswa)->pluck('id_badge')->all();
+        $thresholds = [
+            'Pejuang Pagi'     => 1,
+            'Bintang Ibadah'   => 3,
+            'Pelajar Aktif'    => 5,
+            'Konsisten 7 Hari' => 7,
+            'Aktif Bergerak'   => 10,
+            'Generasi Hebat'   => 14,
+        ];
+
+        foreach (Badge::all() as $badge) {
+            $need = $thresholds[$badge->nama] ?? null;
+            if ($need !== null && $approvedCount >= $need && ! in_array($badge->id_badge, $earnedIds, true)) {
+                BadgeSiswa::create([
+                    'id_siswa'       => $idSiswa,
+                    'id_badge'       => $badge->id_badge,
+                    'diperoleh_pada' => now(),
+                ]);
+            }
+        }
+    }
+
     public function detailSiswa(Request $request, Siswa $siswa)
     {
         $user = $request->user();
         $guru = $this->currentGuru($request);
+        abort_unless($siswa->id_guru === $guru->id_guru, 403);
+
         $siswa->load([
             'kelas',
             'guruWali',
             'badgeSiswa.badge',
             'laporan' => fn ($q) => $q->orderByDesc('tanggal')->with('details'),
         ]);
-        $totalBadgeMaster = \App\Models\Badge::count();
-        $nextBadge = \App\Models\Badge::whereNotIn('id_badge', $siswa->badgeSiswa->pluck('id_badge'))->first();
-        $semester = \App\Models\Semester::orderByDesc('id_semester')->first();
+        $totalBadgeMaster = Badge::count();
+        $nextBadge = Badge::whereNotIn('id_badge', $siswa->badgeSiswa->pluck('id_badge'))->first();
+        $semester = Semester::orderByDesc('id_semester')->first();
 
         return view('teacher.detail-siswa', compact('user', 'guru', 'siswa', 'totalBadgeMaster', 'nextBadge', 'semester'));
     }
@@ -186,7 +260,6 @@ class TeacherController extends Controller
             })
             ->values();
 
-        // Series per periode untuk Grafik Perkembangan (Harian, Mingguan, Bulanan, Semester)
         $siswaIdsAll = Siswa::where('id_guru', $guru->id_guru)
             ->when($idKelas !== '', fn ($q) => $q->where('id_kelas', $idKelas))
             ->pluck('id_siswa');
@@ -213,6 +286,18 @@ class TeacherController extends Controller
             'rekapKelas',
             'chartSeries'
         ));
+    }
+
+    public function profil(Request $request)
+    {
+        $user = $request->user();
+        $guru = $this->currentGuru($request);
+        $siswaList = Siswa::with('kelas')->where('id_guru', $guru->id_guru)->get();
+        $kelasWali = $siswaList->first()?->kelas->nama_kelas ?? '-';
+        $jumlahSiswa = $siswaList->count();
+        $semester = Semester::orderByDesc('id_semester')->first();
+
+        return view('teacher.profil', compact('user', 'guru', 'kelasWali', 'jumlahSiswa', 'semester'));
     }
 
     public function updateProfil(Request $request)

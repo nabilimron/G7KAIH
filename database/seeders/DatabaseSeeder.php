@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         $now = now();
 
-        // 1. Kosongkan seluruh riwayat laporan & pencapaian badge
+        // Clear all report, badge, and account tables before seeding deterministic defaults.
         Schema::disableForeignKeyConstraints();
         DB::table('detail_laporan')->truncate();
         DB::table('laporan')->truncate();
@@ -32,7 +32,6 @@ class DatabaseSeeder extends Seeder
         DB::table('users')->truncate();
         Schema::enableForeignKeyConstraints();
 
-        // 2. 7 Kebiasaan Anak Indonesia Hebat
         Kebiasaan::where('nama_kebiasaan', 'Makan Sehat dan Bergizi')
             ->update(['nama_kebiasaan' => 'Makan Sehat & Bergizi']);
         $kebiasaanList = [
@@ -48,7 +47,6 @@ class DatabaseSeeder extends Seeder
             Kebiasaan::firstOrCreate(['nama_kebiasaan' => $item['nama_kebiasaan']], $item);
         }
 
-        // 3. Semester aktif & Kelas
         Semester::firstOrCreate(
             ['tahun_ajaran' => '2026/2027', 'nama_semester' => 'Ganjil'],
             ['tanggal_mulai' => '2026-07-13', 'tanggal_selesai' => '2026-12-19']
@@ -58,7 +56,6 @@ class DatabaseSeeder extends Seeder
         Kelas::firstOrCreate(['nama_kelas' => 'IX A']);
         Kelas::firstOrCreate(['nama_kelas' => 'VIII A']);
 
-        // 4. Master Badge Pencapaian (kosong belum diraih siswa)
         $badges = [
             ['nama' => 'Pejuang Pagi', 'deskripsi' => 'Bangun pagi tepat waktu.', 'syarat' => '1 hari laporan'],
             ['nama' => 'Bintang Ibadah', 'deskripsi' => 'Menjaga kedisiplinan ibadah harian.', 'syarat' => '3 hari laporan'],
@@ -71,7 +68,7 @@ class DatabaseSeeder extends Seeder
             Badge::firstOrCreate(['nama' => $b['nama']], $b);
         }
 
-        // 5. Tepat 2 Akun Admin, 1 Akun Guru Wali, 1 Akun Murid (Password: Password123)
+        // Seeded default accounts all share Password123 and mirror rows in the legacy user table.
         $admin1 = User::create([
             'name'     => 'Admin Sekolah 1',
             'username' => 'admin1',
