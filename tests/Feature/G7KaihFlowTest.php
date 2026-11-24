@@ -61,14 +61,12 @@ test('alur siswa (isi laporan dari kosong) lalu verifikasi oleh guru1 dan pantau
     $kebiasaan = Kebiasaan::all();
     expect($kebiasaan)->toHaveCount(7);
 
-    // 1. Awal kosong: riwayat belum ada
     $this->actingAs($siswaUser)
         ->get('/student')
         ->assertOk()
         ->assertSee('0/7 hari')
         ->assertSee('Belum ada laporan tersimpan');
 
-    // 2. Siswa mengisi form laporan & simpan permanen
     $payloadKebiasaan = [];
     foreach ($kebiasaan as $idx => $k) {
         if ($idx === 0) {
@@ -90,7 +88,6 @@ test('alur siswa (isi laporan dari kosong) lalu verifikasi oleh guru1 dan pantau
 
     $laporan = Laporan::where('id_siswa', $siswaUser->siswa->id_siswa)->firstOrFail();
 
-    // 3. Guru Wali melihat & menyetujui laporan tersebut
     $this->actingAs($guruUser)->get('/teacher')->assertOk()->assertSee('Dashboard Guru Wali');
     $this->actingAs($guruUser)
         ->post('/teacher/verifikasi/' . $laporan->id_laporan, [
@@ -101,7 +98,6 @@ test('alur siswa (isi laporan dari kosong) lalu verifikasi oleh guru1 dan pantau
 
     expect($laporan->fresh()->status_verifikasi)->toBeTrue();
 
-    // 4. Admin melihat ringkasan di /admin dan kelola akun
     $this->actingAs($adminUser)->get('/admin')->assertOk()->assertSee('Dashboard Admin');
     $this->actingAs($adminUser)->get('/akun')->assertOk()->assertSee('Budi Hartono');
     $this->actingAs($adminUser)->get('/perwalian')->assertOk()->assertSee('Akram M');

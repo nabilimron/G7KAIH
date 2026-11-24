@@ -4,80 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Guru Wali') — Sistem Laporan G7KAIH</title>
+    <title>@yield('title', 'Guru Wali') - Sistem Laporan G7KAIH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @include('includes.admin._style')
+    @stack('styles')
 </head>
 <body>
 @php $u = auth()->user(); @endphp
-<div class="drawer-backdrop" onclick="document.body.classList.remove('nav-open')" aria-hidden="true"></div>
-<aside>
-    <div class="brand">
-        <img src="{{ asset('images/logo-g7kaih.png') }}" alt="Logo G7KAIH" width="36" height="36" style="width:36px;height:36px;border-radius:50%;object-fit:contain;padding:2px;background:#fff;overflow:hidden;flex:none;">
-        <div><b>G7KAIH</b><small>SMPN 21 Sinjai</small></div>
-    </div>
-    <nav>
-        <a class="nv {{ request()->routeIs('teacher.dashboard', 'teacher.detail-siswa') ? 'on' : '' }}" href="{{ route('teacher.dashboard') }}"><span data-i="layout-dashboard"></span><span>Dashboard</span></a>
-        <a class="nv {{ request()->routeIs('teacher.verifikasi', 'teacher.detail-laporan') ? 'on' : '' }}" href="{{ route('teacher.verifikasi') }}"><span data-i="file-check"></span><span>Verifikasi Laporan</span></a>
-        <a class="nv {{ request()->routeIs('teacher.rekapitulasi') ? 'on' : '' }}" href="{{ route('teacher.rekapitulasi') }}"><span data-i="chart-column"></span><span>Rekapitulasi Data</span></a>
-        <button type="button" class="nv" onclick="document.getElementById('teacherProfileModal').style.display='flex'"><span data-i="user-round"></span><span>Profil</span></button>
+
+<header class="app-header">
+  <div class="app-header__inner">
+    <a class="brand" href="{{ route('teacher.dashboard') }}">
+      <img class="brand__logo" src="{{ asset('images/logo-g7kaih.png') }}" alt="Logo G7KAIH" width="40" height="40">
+      <span class="brand__text">
+        <span class="brand__name">G7KAIH</span>
+        <span class="brand__sub">SMPN 21 Sinjai</span>
+      </span>
+    </a>
+
+    <nav class="app-nav" aria-label="Menu guru wali">
+      <a class="app-nav__link {{ request()->routeIs('teacher.dashboard', 'teacher.detail-siswa') ? 'is-active' : '' }}" href="{{ route('teacher.dashboard') }}">Dashboard</a>
+      <a class="app-nav__link {{ request()->routeIs('teacher.verifikasi', 'teacher.detail-laporan') ? 'is-active' : '' }}" href="{{ route('teacher.verifikasi') }}">Verifikasi Laporan</a>
+      <a class="app-nav__link {{ request()->routeIs('teacher.rekapitulasi') ? 'is-active' : '' }}" href="{{ route('teacher.rekapitulasi') }}">Rekapitulasi Data</a>
+      <a class="app-nav__link {{ request()->routeIs('teacher.profil') ? 'is-active' : '' }}" href="{{ route('teacher.profil') }}">Profil</a>
     </nav>
-    <div class="sch"><span>SMPN 21 Sinjai</span><small>Tahun ajaran 2026 / 2027</small></div>
-</aside>
 
-<div class="area">
-    <header>
-        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-            <button type="button" class="menu-btn" onclick="document.body.classList.toggle('nav-open')" aria-label="Buka menu navigasi">
-                <span data-i="menu"></span>
-            </button>
-            <b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Sistem Laporan G7KAIH</b>
-        </div>
-        <div class="acc">
-            <span data-i="bell" aria-hidden="true"></span>
-            <div class="av">{{ $u ? $u->inisial() : 'GW' }}</div>
-            <div class="acc-meta"><strong>{{ $u->name ?? 'Guru Wali' }}</strong><small>Guru Wali</small></div>
-            <form method="POST" action="{{ route('logout') }}" style="margin-left:6px;">
-                @csrf
-                <button type="submit" style="padding:6px 10px;border-radius:8px;background:#fdecee;color:#e34557;font-size:11px;font-weight:700;cursor:pointer;">Keluar</button>
-            </form>
-        </div>
-    </header>
-    <div class="mob-subbar">
-        <div><strong>SMPN 21 Sinjai</strong><small>Tahun ajaran 2026 / 2027</small></div>
-        <div style="text-align:right;"><strong>{{ $u->name ?? 'Guru Wali' }}</strong><small>Guru Wali</small></div>
+    <div class="app-user">
+      <button type="button" class="theme-circle" onclick="toggleTheme()" aria-label="Ganti tema terang atau gelap" title="Ganti Tema">
+        <span data-i="moon"></span>
+      </button>
+      <a href="{{ route('teacher.profil') }}" style="display:flex;align-items:center;gap:10px;">
+        <div class="av" aria-hidden="true">{{ $u ? $u->inisial() : 'GW' }}</div>
+        <span class="app-user__meta">
+          <span class="app-user__name">{{ $u->name ?? 'Guru Wali' }}</span>
+          <span class="app-user__role">Guru Wali</span>
+        </span>
+      </a>
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit" class="logout-btn">Keluar</button>
+      </form>
     </div>
+  </div>
+</header>
 
-    <main>
-        @yield('content')
-    </main>
+<main class="app-container">
+    @yield('content')
+</main>
 
-    @include('includes.admin._footer')
-</div>
+@include('includes.admin._footer')
 
-{{-- Modal Profil Guru Wali --}}
-<div id="teacherProfileModal" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(16,46,84,.45);align-items:center;justify-content:center;padding:16px;">
-    <div class="card" style="width:100%;max-width:420px;">
-        <h2>Profil Guru Wali</h2>
-        <form method="POST" action="{{ route('teacher.profil.update') }}" style="display:flex;flex-direction:column;gap:14px;">
-            @csrf @method('PUT')
-            <div class="fld">
-                <label for="gw_nama">Nama Guru Wali</label>
-                <div class="ctl"><input id="gw_nama" name="nama_guru" value="{{ $guru->nama_guru ?? ($u->name ?? '') }}" required></div>
-            </div>
-            <div class="fld">
-                <label for="gw_hp">Nomor Telepon</label>
-                <div class="ctl"><input id="gw_hp" name="no_hp" value="{{ $guru->no_hp ?? '' }}"></div>
-            </div>
-            <div style="display:flex;justify-content:flex-end;gap:10px;">
-                <button type="button" class="btn o" onclick="document.getElementById('teacherProfileModal').style.display='none'">Tutup</button>
-                <button type="submit" class="btn">Simpan Profil</button>
-            </div>
-        </form>
-    </div>
-</div>
+<nav class="bottom-nav" aria-label="Navigasi bawah guru wali">
+  <a class="bottom-nav__item {{ request()->routeIs('teacher.dashboard', 'teacher.detail-siswa') ? 'is-active' : '' }}" href="{{ route('teacher.dashboard') }}">
+    <span data-i="layout-dashboard"></span>
+    <span>Dashboard</span>
+  </a>
+  <a class="bottom-nav__item {{ request()->routeIs('teacher.verifikasi', 'teacher.detail-laporan') ? 'is-active' : '' }}" href="{{ route('teacher.verifikasi') }}">
+    <span data-i="file-check"></span>
+    <span>Verifikasi</span>
+  </a>
+  <a class="bottom-nav__item {{ request()->routeIs('teacher.rekapitulasi') ? 'is-active' : '' }}" href="{{ route('teacher.rekapitulasi') }}">
+    <span data-i="chart-column"></span>
+    <span>Rekap</span>
+  </a>
+  <a class="bottom-nav__item {{ request()->routeIs('teacher.profil') ? 'is-active' : '' }}" href="{{ route('teacher.profil') }}">
+    <span data-i="user-round"></span>
+    <span>Profil</span>
+  </a>
+</nav>
 
-<div class="toast" id="toast" role="status"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 @include('includes.admin._js')
 @stack('scripts')
 </body>

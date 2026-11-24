@@ -9,7 +9,7 @@ use App\Models\Kebiasaan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
-// Halaman publik (landing) — terhubung ke tabel kebiasaan di db_g7kaih
+// Public landing reads kebiasaan directly from db_g7kaih.
 $renderHome = function () {
     $kebiasaan = Schema::hasTable('kebiasaan')
         ? Kebiasaan::orderBy('id_kebiasaan')->get()
@@ -20,14 +20,12 @@ $renderHome = function () {
 Route::get('/', $renderHome)->name('home');
 Route::get('/home', $renderHome);
 
-// Autentikasi
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.post');
 Route::get('/lupa-sandi', [AuthController::class, 'showForgotPassword'])->name('password.request');
 Route::post('/lupa-sandi', [AuthController::class, 'submitForgotPassword'])->name('password.request.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Halaman Siswa (/student)
 Route::middleware(['auth', 'role:siswa'])
     ->prefix('student')
     ->name('student.')
@@ -43,7 +41,6 @@ Route::middleware(['auth', 'role:siswa'])
         Route::put('/profil/password', [StudentController::class, 'updatePassword'])->name('profil.password');
     });
 
-// Halaman Guru Wali (/teacher)
 Route::middleware(['auth', 'role:guru_wali'])
     ->prefix('teacher')
     ->name('teacher.')
@@ -54,10 +51,10 @@ Route::middleware(['auth', 'role:guru_wali'])
         Route::post('/verifikasi/{laporan}', [TeacherController::class, 'verifyLaporan'])->name('verify');
         Route::get('/detail-siswa/{siswa}', [TeacherController::class, 'detailSiswa'])->name('detail-siswa');
         Route::get('/rekapitulasi', [TeacherController::class, 'rekapitulasi'])->name('rekapitulasi');
+        Route::get('/profil', [TeacherController::class, 'profil'])->name('profil');
         Route::put('/profil', [TeacherController::class, 'updateProfil'])->name('profil.update');
     });
 
-// Halaman Admin (/admin & /dashboard)
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/dashboard', [AdminController::class, 'dashboard']);

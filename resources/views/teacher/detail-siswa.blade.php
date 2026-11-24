@@ -11,7 +11,7 @@
  </div>
 
  <div>
-  <a href="{{ route('teacher.dashboard') }}" style="color:var(--pri);font-size:12px;display:inline-flex;align-items:center;gap:6px;">&larr; Kembali ke Daftar Siswa</a>
+  <a class="btn o s" href="{{ route('teacher.dashboard') }}">&larr; Kembali ke Daftar Siswa</a>
  </div>
 
  @php
@@ -21,7 +21,6 @@
   $badgeNames = $earnedBadges->map(fn($bs) => $bs->badge->nama ?? '')->filter()->join(' · ');
  @endphp
 
- {{-- Card 1: Identitas Siswa (Figma 35:5609) --}}
  <div class="card" style="padding:20px;gap:14px;">
   <div style="display:flex;align-items:center;gap:14px;">
    <div class="av" style="width:56px;height:56px;font-size:18px;">{{ $ini }}</div>
@@ -36,7 +35,6 @@
   </div>
  </div>
 
- {{-- Card 2: Ringkasan 2 Kolom (Figma 35:5617) --}}
  <div class="g2 eq">
   <div class="card" style="padding:20px;gap:12px;">
    <h2 style="font-size:16px;">Laporan disetujui</h2>
@@ -56,7 +54,6 @@
   </div>
  </div>
 
- {{-- Card 3: Riwayat Laporan (Figma 35:5626) --}}
  <div class="card" style="padding:20px;gap:12px;">
   <h2 style="font-size:16px;">Riwayat Laporan</h2>
   @forelse ($siswa->laporan as $lap)
@@ -67,7 +64,7 @@
      <span style="color:var(--mut);">{{ $lap->details->count() }} kebiasaan dilaporkan</span>
      <a href="{{ route('teacher.detail-laporan', $lap) }}" style="color:var(--pri);font-weight:500;">Lihat foto bukti</a>
     </div>
-    <span class="pill" style="border-radius:5px;background:{{ $lbl === 'Disetujui' ? 'var(--ok)' : ($lbl === 'Ditolak' ? 'var(--bad)' : 'var(--wait)') }}">{{ $lbl }}</span>
+    <span class="pill pill--{{ $lbl === 'Disetujui' ? 'ok' : ($lbl === 'Ditolak' ? 'bad' : 'wait') }}">{{ $lbl }}</span>
    </div>
   @empty
    <p style="color:var(--mut);font-size:13px;padding:12px 0;">Belum ada riwayat laporan untuk siswa ini.</p>

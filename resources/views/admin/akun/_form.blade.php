@@ -25,5 +25,7 @@
  </select></label>
  @error('status') <small style="color:#e34557">{{ $message }}</small> @enderror</div>
  
-<button class="btn" type="submit">Simpan</button>
-<a href="{{ route('akun.index') }}">Batal</a>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+ <button class="btn" type="submit">Simpan</button>
+ <a class="btn o" href="{{ route('akun.index') }}">Batal</a>
+</div>

@@ -1,7 +1,4 @@
-/* =========================================================
-   G7KAIH — SMPN 21 Sinjai · Figma 1:1 Design System
-   Matches Figma renders (login_light, login_dark, student_*)
-   ========================================================= */
+/* G7KAIH application styles */
 
 :root {
   --bg: #eef3f8;
@@ -54,7 +51,7 @@ html, body {
 a { color: inherit; text-decoration: none; }
 button, input, textarea, select { font-family: inherit; }
 
-/* ---------- Brand Logo (Ellipse) ---------- */
+/* Brand logo */
 .brand { display: inline-flex; align-items: center; gap: 9px; }
 .brand__logo {
   width: 40px; height: 40px; flex: none;
@@ -65,7 +62,7 @@ button, input, textarea, select { font-family: inherit; }
 .brand__name { font-weight: 700; font-size: 20px; color: var(--navy); letter-spacing: -0.02em; }
 .brand__sub { font-size: 12px; font-weight: 400; color: var(--muted); }
 
-/* ---------- Buttons ---------- */
+/* Buttons */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   height: 40px; padding: 0 16px; border-radius: 6px; border: 1px solid transparent;
@@ -88,7 +85,7 @@ button, input, textarea, select { font-family: inherit; }
 }
 .theme-circle:hover { background: var(--blue-soft); }
 
-/* ---------- Solid Status Pills (Figma exact) ---------- */
+/* Status pills */
 .status-pill {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
@@ -99,7 +96,7 @@ button, input, textarea, select { font-family: inherit; }
 .status-pill--no { background: #e34557; }
 .status-pill--round { border-radius: 999px; padding: 4px 12px; font-size: 11px; }
 
-/* ---------- Alerts ---------- */
+/* Alerts */
 .alert {
   padding: 12px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5;
   display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
@@ -109,7 +106,7 @@ button, input, textarea, select { font-family: inherit; }
 .alert--amber { background: var(--amber-bg); color: #7c4a03; }
 [data-theme="dark"] .alert--amber { color: #fcd34d; }
 
-/* ---------- Form Controls (Figma h=40px, rad=6px) ---------- */
+/* Form controls */
 .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
 .field__label { font-size: 12px; font-weight: 600; color: var(--navy); }
 .input-wrap {
@@ -132,9 +129,7 @@ button, input, textarea, select { font-family: inherit; }
 .field__err { font-size: 12px; color: var(--red); font-weight: 500; }
 .field__hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-/* =========================================================
-   LOGIN PAGE — Exact Figma Landscape + Centered Card
-   ========================================================= */
+/* Login page */
 .login-canvas {
   width: 100%; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between;
   padding: 32px clamp(16px, 3.2vw, 40px) 28px; position: relative; overflow-x: hidden;
@@ -190,9 +185,7 @@ button, input, textarea, select { font-family: inherit; }
   .login-card { border-radius: 16px; padding: 24px; box-shadow: 0 8px 16px rgba(16, 46, 84, 0.14); }
 }
 
-/* =========================================================
-   STUDENT PORTAL — Exact Figma Header, Grid & Cards (Full-Width)
-   ========================================================= */
+/* Student portal */
 .app-header {
   position: sticky; top: 0; z-index: 30; background: var(--card); height: 80px; width: 100%;
   display: flex; align-items: center; border-bottom: 1px solid var(--line-soft);
@@ -263,7 +256,7 @@ button, input, textarea, select { font-family: inherit; }
 .card { background: var(--card); border-radius: 12px; padding: clamp(18px, 2vw, 24px); }
 .card__title { font-size: 16px; font-weight: 700; color: var(--navy); margin: 0; }
 
-/* Progress Bar + 7 Circular Day Badges (Figma 543:7082) */
+/* Progress bar and weekly day badges */
 .progress-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 13px; margin: 14px 0 10px; }
 .progress-track { width: 100%; height: 7px; border-radius: 999px; background: var(--blue-soft); overflow: hidden; margin-bottom: 20px; }
 .progress-fill { height: 100%; background: var(--blue); border-radius: 999px; transition: width .25s ease; }
@@ -278,7 +271,7 @@ button, input, textarea, select { font-family: inherit; }
 .week-circle.is-done { background: var(--blue); color: #ffffff; }
 .week-label { font-size: 12px; color: var(--muted); }
 
-/* Riwayat Terbaru Rows (Figma clean divider rows) */
+/* Recent history rows */
 .history-row {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 14px 0; border-bottom: 1px solid var(--line-soft);
@@ -287,7 +280,7 @@ button, input, textarea, select { font-family: inherit; }
 .history-row__left { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--navy); }
 .history-more { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-size: 13px; font-weight: 500; color: var(--blue); }
 
-/* Lencana Terbaru Circle (Figma 64px circle) */
+/* Badge icons */
 .badge-hero-icon {
   width: 64px; height: 64px; border-radius: 999px; background: var(--blue); color: #fff;
   display: inline-flex; align-items: center; justify-content: center; margin: 12px auto 14px;
@@ -297,7 +290,7 @@ button, input, textarea, select { font-family: inherit; }
   display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;
 }
 
-/* Blue Banner CTA (Figma 543:7082) */
+/* Badge banner CTA */
 .banner-lencana {
   display: flex; align-items: center; justify-content: space-between; gap: 18px;
   background: var(--blue); color: #ffffff; border-radius: 12px;
@@ -309,7 +302,7 @@ button, input, textarea, select { font-family: inherit; }
   display: inline-flex; align-items: center; justify-content: center; flex: none;
 }
 
-/* Isi Laporan Habit Check Rows (Figma 543:7234) */
+/* Habit check rows */
 .habit-check-row {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 10px 0;
@@ -322,7 +315,7 @@ button, input, textarea, select { font-family: inherit; }
 }
 .habit-check-pill input { width: 16px; height: 16px; accent-color: var(--blue); margin: 0; }
 
-/* Lencana Summary & Underline Tabs (Figma 543:7401) */
+/* Badge summary and tabs */
 .lencana-summary {
   display: flex; align-items: center; gap: 16px; background: var(--card);
   border: 1px solid var(--line); border-radius: 12px; padding: 20px 28px; margin-bottom: 24px;
@@ -337,7 +330,7 @@ button, input, textarea, select { font-family: inherit; }
 }
 .underline-tab.is-active { color: var(--blue); font-weight: 600; border-bottom-color: var(--blue); }
 
-/* Profil 2-col Info Grid (Figma 543:7678) */
+/* Profile info grid */
 .info-grid { display: grid; grid-template-columns: 1fr; gap: 16px 32px; }
 @media (min-width: 720px) { .info-grid { grid-template-columns: repeat(2, 1fr); } }
 .info-cell { padding-bottom: 14px; border-bottom: 1px solid var(--line-soft); }
@@ -350,7 +343,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
 .tbl tr:last-child td { border-bottom: 0; }
 .tbl th { font-size: 12px; font-weight: 600; color: var(--muted); background: var(--bg); }
 
-/* Native date/time placeholder overlay (Figma 543:7234) */
+/* Native date/time placeholder overlay */
 .input-picker { position: relative; }
 .input-picker input[type="date"],
 .input-picker input[type="time"] {

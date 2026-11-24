@@ -232,7 +232,6 @@ class StudentController extends Controller
                 ]);
             }
 
-            // Cek pencapaian badge otomatis
             $total = Laporan::where('id_siswa', $siswa->id_siswa)->count();
             $earnedIds = BadgeSiswa::where('id_siswa', $siswa->id_siswa)->pluck('id_badge')->all();
             $thresholds = [
